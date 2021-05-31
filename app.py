@@ -11,7 +11,7 @@ list_of_params = [{'df': df_month_mean, 'df_name': 'df_month_mean', 'date': 'mon
                   {'df': df_year_mean, 'df_name': 'df_year_mean', 'date': 'year'},
                   {'df': df_year_median, 'df_name': 'df_year_median', 'date': 'year'}]
 dict_of_plots = get_dict_of_plots(list_of_params)
-st.sidebar.image('./data/misis_logo.png')
+#st.sidebar.image('./data/misis_logo.png')
 st.sidebar.header('Выберите необходимые графики: ')
 tth_checkbox = st.sidebar.checkbox('TTH', value=True)
 depart_checkbox = st.sidebar.checkbox('Анализ по департаментам', value=False)
