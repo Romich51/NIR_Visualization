@@ -12,7 +12,9 @@ def load_data():
     df_year_mean = df.groupby('year')['duration_days'].mean().reset_index()
     depart_tth = df.groupby('department_id')['duration_days'].median().reset_index()
     depart_tth = depart_tth[(depart_tth.duration_days > 1) & (depart_tth.duration_days < 50)]
-    return df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth
+    stages_duration = pd.read_csv('./data/stages_duration.csv')
+    stage_act_duration = pd.read_csv('./data/stage_act_duration.csv')
+    return df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth, stages_duration, stage_act_duration
 
 
 @st.cache(hash_funcs={dict: lambda _: None})
