@@ -2,38 +2,37 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import plotly.express as px
-
-
-@st.cache
-def load_data():
-    df = pd.read_csv('./data/data.csv')
-    df_month_median = df.groupby('month')['duration_days'].median().reset_index()
-    df_year_median = df.groupby('year')['duration_days'].median().reset_index()
-    df_month_mean = df.groupby('month')['duration_days'].mean().reset_index()
-    df_year_mean = df.groupby('year')['duration_days'].mean().reset_index()
-    depart_tth = df.groupby('department_id')['duration_days'].median().reset_index()
-    depart_tth = depart_tth[(depart_tth.duration_days > 1) & (depart_tth.duration_days < 50)]
-    return df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth
+from utils import load_data, get_dict_of_plots
 
 
 df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth = load_data()
-df_1 = df.copy()
-st.dataframe(df_1)
+list_of_params = [{'df': df_month_mean, 'df_name': 'df_month_mean', 'date': 'month'},
+                  {'df': df_month_median, 'df_name': 'df_month_median', 'date': 'month'},
+                  {'df': df_year_mean, 'df_name': 'df_year_mean', 'date': 'year'},
+                  {'df': df_year_median, 'df_name': 'df_year_median', 'date': 'year'}]
+dict_of_plots = get_dict_of_plots(list_of_params)
 
-st.sidebar.header('Time to Hire')
-date_aggr_radio = st.sidebar.radio(label='Агрегация по времени:', options=['Месяц', 'Год'])
-type_aggr_radio = st.sidebar.radio(label='Тип агрегации:', options=['Медиана', 'Среднее'])
+st.sidebar.header('Выберите необходимые графики: ')
+tth_checkbox = st.sidebar.checkbox('TTH', value=True)
+depart_checkbox = st.sidebar.checkbox('Анализ по департаментам', value=False)
 
-if date_aggr_radio == 'Месяц':
-    if type_aggr_radio == 'Медиана':
-        st.plotly_chart(px.line(df_month_median, x='month', y='duration_days'))
+
+if tth_checkbox:
+    st.sidebar.header('Time to Hire')
+    date_aggr_radio = st.sidebar.radio(label='Агрегация по времени:', options=['Месяц', 'Год'])
+    type_aggr_radio = st.sidebar.radio(label='Тип агрегации:', options=['Медиана', 'Среднее'])
+    st.title('Анализ TTH')
+    if date_aggr_radio == 'Месяц':
+        if type_aggr_radio == 'Медиана':
+            st.plotly_chart(dict_of_plots['df_month_median_month'])
+        else:
+            st.plotly_chart(dict_of_plots['df_month_mean_month'])
     else:
-        st.plotly_chart(px.line(df_month_mean, x='month', y='duration_days'))
-else:
-    if type_aggr_radio == 'Медиана':
-        st.plotly_chart(px.line(df_year_median, x='year', y='duration_days'))
-    else:
-        st.plotly_chart(px.line(df_year_mean, x='year', y='duration_days'))
+        if type_aggr_radio == 'Медиана':
+            st.plotly_chart(dict_of_plots['df_year_median_year'])
+        else:
+            st.plotly_chart(dict_of_plots['df_year_mean_year'])
 
-
-st.plotly_chart(px.histogram(depart_tth, 'duration_days'))
+if depart_checkbox:
+    st.title('Распределение TTH по департаментам')
+    st.plotly_chart(px.histogram(depart_tth, 'duration_days'))
