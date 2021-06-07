@@ -14,7 +14,9 @@ def load_data():
     depart_tth = depart_tth[(depart_tth.duration_days > 1) & (depart_tth.duration_days < 50)]
     stages_duration = pd.read_csv('./data/stages_duration.csv')
     stage_act_duration = pd.read_csv('./data/stage_act_duration.csv')
-    return df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth, stages_duration, stage_act_duration
+    hire_qty_by_month = pd.read_csv('./data/hire_qty_by_month.csv')
+    return df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth, stages_duration, \
+           stage_act_duration, hire_qty_by_month
 
 
 @st.cache(hash_funcs={dict: lambda _: None})
@@ -22,5 +24,5 @@ def get_dict_of_plots(list_of_params):
     dict_of_plots = {}
     for param in list_of_params:
         plotly_fig = px.line(param['df'], x=param['date'], y='duration_days')
-        dict_of_plots[param['df_name']+'_'+param['date']] = plotly_fig
+        dict_of_plots[param['df_name'] + '_' + param['date']] = plotly_fig
     return dict_of_plots

@@ -5,7 +5,7 @@ import plotly.express as px
 from utils import load_data, get_dict_of_plots
 
 
-df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth, stages_duration, stage_act_duration = load_data()
+df, df_month_median, df_year_median, df_month_mean, df_year_mean, depart_tth, stages_duration, stage_act_duration, hire_qty_by_month = load_data()
 list_of_params = [{'df': df_month_mean, 'df_name': 'df_month_mean', 'date': 'month'},
                   {'df': df_month_median, 'df_name': 'df_month_median', 'date': 'month'},
                   {'df': df_year_mean, 'df_name': 'df_year_mean', 'date': 'year'},
@@ -16,6 +16,7 @@ st.sidebar.header('Выберите необходимые графики: ')
 tth_checkbox = st.sidebar.checkbox('TTH', value=True)
 depart_checkbox = st.sidebar.checkbox('Анализ по департаментам', value=False)
 stages_checkbox = st.sidebar.checkbox('Анализ по стадиям', value=False)
+hire_qty_checkbox = st.sidebar.checkbox('Кол-во нанимаемых в динамике', value=False)
 
 if tth_checkbox:
     st.sidebar.header('Time to Hire')
@@ -46,3 +47,7 @@ if stages_checkbox:
         st.plotly_chart(px.bar(stages_duration, x='stage_name', y='duration_hours'))
     else:
         st.plotly_chart(px.bar(stage_act_duration, x='stage_activity', y='duration_hours'))
+
+if hire_qty_checkbox:
+    st.title('Количество нанимаемых в динамике')
+    st.plotly_chart(px.line(hire_qty_by_month, x='month', y='hire_qty'))
